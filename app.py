@@ -8,14 +8,12 @@ st.title("🤖 Haifa AI: Evidence Finder")
 st.write("Paste a story below, ask a question, and I will find the evidence for you!")
 
 # --- AUTOMATIC KEY LOADING ---
-# This looks for the key inside the Streamlit "Secrets" safe
 try:
     api_key = st.secrets["GEMINI_KEY"]
 except:
     st.error("⚠️ I couldn't find the API Key! Make sure you added it to the 'Secrets' in settings.")
     st.stop()
 
-# Configure the AI with the hidden key
 genai.configure(api_key=api_key)
 
 # --- THE APP ---
@@ -26,8 +24,8 @@ if st.button("Find Evidence"):
     if story and question:
         with st.spinner("Reading the story and looking for clues..."):
             try:
-                # 1. Select the model
-               model = genai.GenerativeModel('gemini-1.5-flash')
+                # 1. Select the model (UPDATED NAME)
+                model = genai.GenerativeModel('gemini-1.5-flash')
 
                 # 2. Create the prompt
                 my_prompt = f"""
