@@ -27,7 +27,7 @@ if st.button("Find Evidence"):
         with st.spinner("Reading the story and looking for clues..."):
             try:
                 # 1. Select the model
-                model = genai.GenerativeModel('gemini-pro')
+               model = genai.GenerativeModel('gemini-1.5-flash')
 
                 # 2. Create the prompt
                 my_prompt = f"""
