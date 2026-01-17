@@ -1,52 +1,31 @@
 import streamlit as st
 import google.generativeai as genai
+import importlib.metadata
 
-# --- PAGE SETUP ---
-st.set_page_config(page_title="Haifa AI", page_icon="🤖")
+st.title("🛠 Haifa AI: Diagnostic Mode")
 
-st.title("🤖 Haifa AI: Evidence Finder")
-st.write("Paste a story below, ask a question, and I will find the evidence for you!")
+# 1. Check the Library Version
+try:
+    version = importlib.metadata.version("google-generativeai")
+    st.write(f"**Installed Library Version:** `{version}`")
+except:
+    st.error("Library not found!")
 
-# --- AUTOMATIC KEY LOADING ---
+# 2. Check the API Key & Connection
 try:
     api_key = st.secrets["GEMINI_KEY"]
-except:
-    st.error("⚠️ I couldn't find the API Key! Make sure you added it to the 'Secrets' in settings.")
-    st.stop()
-
-genai.configure(api_key=api_key)
-
-# --- THE APP ---
-story = st.text_area("Paste the Story Here:", height=200)
-question = st.text_input("What is your question about the story?")
-
-if st.button("Find Evidence"):
-    if story and question:
-        with st.spinner("Reading the story and looking for clues..."):
-            try:
-                # 1. Select the model (UPDATED NAME)
-                model = genai.GenerativeModel('gemini-1.0.pro')
-
-                # 2. Create the prompt
-                my_prompt = f"""
-                Here is a story:
-                {story}
-
-                Here is a question about the story:
-                {question}
-
-                Please answer the question. After the answer, provide direct quotes 
-                from the text that support your answer. Label the quotes as 'Evidence'.
-                """
-
-                # 3. Get the response
-                response = model.generate_content(my_prompt)
-                
-                # 4. Show the result
-                st.success("Analysis Complete!")
-                st.write(response.text)
-
-            except Exception as e:
-                st.error(f"Something went wrong: {e}")
-    else:
-        st.warning("Please enter both a story and a question first!")
+    genai.configure(api_key=api_key)
+    st.success("✅ API Key found and configured.")
+    
+    # 3. Ask Google: "What models do you have?"
+    st.write("### 📋 List of Available Models:")
+    st.write("The app sees these models as valid:")
+    
+    models = []
+    for m in genai.list_models():
+        if 'generateContent' in m.supported_generation_methods:
+            models.append(m.name)
+            st.code(f"{m.name}")
+            
+except Exception as e:
+    st.error(f"❌ Connection Error: {e}")
